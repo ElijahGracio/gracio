@@ -32,15 +32,15 @@ position: relative;
     background-size: cover;
 }
 .container #slider-img-2{
-    background-image: url(file:///C:/Users/Acer/Desktop/fam2.PNG);
+    background-image: url(https://scontent.fmnl25-3.fna.fbcdn.net/v/t39.30808-6/415682651_7202548193130293_812680752676105727_n.jpg?stp=cp6_dst-jpg&_nc_cat=103&ccb=1-7&_nc_sid=5f2048&_nc_ohc=gyq8kAaQ_4sAX_44Mr0&_nc_ht=scontent.fmnl25-3.fna&oh=00_AfCaNU5Mg6gpRe2cL8AuMbjH4DmyeXsN2_ZWQMBoIgu-NQ&oe=66006173);
     background-position: center;
 }
 .container #slider-img-3{
-    background-image: url(file:///C:/Users/Acer/Desktop/Family.PNG);
+    background-image: url(https://scontent-mnl1-2.xx.fbcdn.net/v/t39.30808-6/416940187_7227646730620439_2071765355565220535_n.jpg?stp=cp6_dst-jpg&_nc_cat=104&ccb=1-7&_nc_sid=5f2048&_nc_ohc=yhd6IAZu2LcAX_PzSjt&_nc_ht=scontent-mnl1-2.xx&oh=00_AfApD7N4O8zIaRubwMwjo460NceXWqX5wiW4aK6zrn8n2A&oe=65FF36D7);
     background-position: center;
 }
 .container #slider-img-4{
-    background-image: url(file:///C:/Users/Acer/Pictures/Back.jpg);
+    background-image: url(https://scontent.fmnl25-3.fna.fbcdn.net/v/t39.30808-6/415681854_7202548266463619_2770902742768764529_n.jpg?stp=cp6_dst-jpg&_nc_cat=108&ccb=1-7&_nc_sid=5f2048&_nc_ohc=hgIZG2LS1RkAX-4TcJh&_nc_ht=scontent.fmnl25-3.fna&oh=00_AfBuPICfVgds3M7hLABbp9IHpHOZyhr6AaMc4aFePryCBA&oe=66001CC6);
     background-position: center;
 }
 .container .button-holder .button{
