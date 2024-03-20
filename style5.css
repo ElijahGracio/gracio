@@ -1,0 +1,76 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+body{
+    background-image: url(file:///C:/Users/Acer/Desktop/New%20folder/dll/c.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.container{
+position: relative;
+}
+.container .wrapper{
+    width: 60vw;
+    height: 75vh;
+    box-shadow: 10px 10px 10px rgba(0,0,0,0.6);
+    margin: 5rem auto;
+    overflow: hidden;
+}
+.container .wrapper-holder{
+    display: grid;
+    grid-template-columns: repeat(4, 100%);
+    height: 100%;
+    width: 100%;
+    animation: slider 30% ease-in-out infinite
+    alternate ;
+}
+.container #slider-img-1{
+    background-image: url(https://scontent.fmnl33-6.fna.fbcdn.net/v/t1.15752-9/386449087_1277893382919564_3961789793153714960_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeEBP7REjWg3m0maCGuzc1HjxTZkzB2xpTjFNmTMHbGlOFkoNUmjtot-Pegu65fhNfWzgBZa1ZJbCmz6_KddTOkZ&_nc_ohc=QB_Ww9ZqL_gAX-UTIy4&_nc_ht=scontent.fmnl33-6.fna&oh=03_AdRRKCsvloabb9F1iWRDmYObtDhNbSE1aq1Ngbk7Men6-Q&oe=66213012);
+    background-position: center;
+    background-size: cover;
+}
+.container #slider-img-2{
+    background-image: url(https://scontent.fmnl33-1.fna.fbcdn.net/v/t1.15752-9/385542137_240756162091140_7939932211710020333_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeH-SPnalpQv_5lL1IKk4VLtAVTlTq6-WsYBVOVOrr5axhaWAvq-nVppD3aZfQmVS_zKdVN6Hx9EM0UKXqa5RFx0&_nc_ohc=gEzLYv58gRcAX9rY5cv&_nc_ht=scontent.fmnl33-1.fna&oh=03_AdSr56MI-ZIO9v3jpH93nSIuZdFmbtsAS_lnqxt8rxI9RQ&oe=66212538);
+    background-position: center;
+    background-size: cover;
+}
+.container #slider-img-3{
+    background-image: url(https://scontent.fmnl33-5.fna.fbcdn.net/v/t1.15752-9/396536659_701571715264055_6150207759804113195_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeHn6_Ux9FFswOnZKT1yKsbnnn4dPlVbAcGefh0-VVsBwaln05Vzm2AVjFMyNyHwvcvUc3zgTCP5jDLQ-Xu_xaFm&_nc_ohc=TmyVbgu95e4AX_gqe1a&_nc_ht=scontent.fmnl33-5.fna&oh=03_AdSsB6KfEIQeJtKJfqF0jVbfpi5NaFKkbrp6qlgJRUivBA&oe=66211C17);
+    background-position: center;
+    background-size: cover;
+}
+.container #slider-img-4{
+    background-image: url(https://scontent.fmnl33-3.fna.fbcdn.net/v/t1.15752-9/363777961_1476170542958720_3264182016294949965_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeEwtDQppafXfu9SFtjyYUCg93Pbg_ZlceL3c9uD9mVx4lmbYBCgQdaJYTYqpxJJd_SCGwa922-fpop71jhgUhxI&_nc_ohc=iXDOs-74MZ8AX8JrAwk&_nc_ht=scontent.fmnl33-3.fna&oh=03_AdTzCy346oCuFPJGzia5ZGmXviFBIH00kswl-cSGISvw0A&oe=6621291F);
+    background-position: center;
+    background-size: cover;
+}
+.container .button-holder .button{
+    background-color: white;
+    width: 15px;
+    height: 15px;
+    border-radius: 15px;
+    display: inline-block;
+    margin: .3rem;
+}
+.container .button-holder{
+    position: absolute;
+    left: 45%;
+    bottom: 0%;
+}
+.button:hover{
+    box-shadow: 0px 0px 7px 4px rgba(50, 163, 175, 0.6);
+}
+@keyframes slider{
+    0%{transform: translateX(0%);}
+    10%{transform: translateX(-100%);}
+    20%{transform: translateX(-100%);}
+    30%{transform: translateX(-200%);}
+    40%{transform: translateX(-200%);}
+    50%{transform: translateX(-200%);}
+    60%{transform: translateX(-300%);}
+    70%{transform: translateX(-300%);}
+    80%{transform: translateX(-300%);}
+    90%{transform: translateX(0%);}
+    100%{transform: translateX(0%);}
+}
