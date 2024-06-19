@@ -1,16 +1,20 @@
-const container = document.getElementById('container');
-const registerBtn = document.getElementById('register');
-const loginBtn = document.getElementById('login');
-
-registerBtn.addEventListener('click', () => {
-    container.classList.add("active");
-});
-
-loginBtn.addEventListener('click', () => {
-    container.classList.remove("active");
-});
-
 document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('container');
+    const registerBtn = document.getElementById('register');
+    const loginBtn = document.getElementById('login');
+
+    registerBtn.addEventListener('click', () => {
+        container.classList.add("active");
+    });
+
+    loginBtn.addEventListener('click', () => {
+        container.classList.remove("active");
+    });
+
+    function activateSignInPanel() {
+        container.classList.remove("active");
+    }
+
     const signUpForm = document.getElementById('signUpForm');
     const signInForm = document.getElementById('signInForm');
 
@@ -22,19 +26,28 @@ document.addEventListener('DOMContentLoaded', function() {
             const email = document.getElementById('signupEmail').value;
             const password = document.getElementById('signupPassword').value;
 
+            if (!isValidEmail(email)) {
+                alert('Please enter a valid email address ending with @gmail.com or @yahoo.com');
+                return;
+            }
 
-            const savedEmail = localStorage.getItem('email');
-            if (savedEmail === email) {
+            let accounts = JSON.parse(localStorage.getItem('accounts')) || [];
+
+            const existingAccount = accounts.find(account => account.email === email);
+            if (existingAccount) {
                 alert('An account with this email already exists. Please sign in instead.');
                 signUpForm.reset();
                 return;
             }
 
-            localStorage.setItem('name', name);
-            localStorage.setItem('email', email);
-            localStorage.setItem('password', password);
+            accounts.push({ name, email, password });
+
+            localStorage.setItem('accounts', JSON.stringify(accounts));
 
             alert('Sign Up Successful!');
+
+            // Activate sign-in panel after successful sign-up
+            activateSignInPanel();
 
             signUpForm.reset();
         });
@@ -47,10 +60,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const loginEmail = document.getElementById('loginEmail').value;
             const loginPassword = document.getElementById('loginPassword').value;
 
-            const savedEmail = localStorage.getItem('email');
-            const savedPassword = localStorage.getItem('password');
+            let accounts = JSON.parse(localStorage.getItem('accounts')) || [];
 
-            if (loginEmail === savedEmail && loginPassword === savedPassword) {
+            const matchedAccount = accounts.find(account => account.email === loginEmail && account.password === loginPassword);
+
+            if (matchedAccount) {
+                alert('Sign In Successful!');
                 window.location.href = 'index1.html';
             } else {
                 alert('Invalid email or password. Please try again.');
@@ -58,5 +73,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
             signInForm.reset();
         });
+    }
+
+    function isValidEmail(email) {
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com)$/i;
+        return emailRegex.test(email);
     }
 });
