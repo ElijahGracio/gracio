@@ -15,9 +15,11 @@
       height: 100vh;
       background-color: #f4f4f4;
       background-image: url(https://wallpapers.com/images/featured/acoustic-guitar-background-81wwq1khlwvotnx4.jpg);
+      position: relative;
     }
     .container {
       display: flex;
+      flex-direction: column;
       justify-content: space-between;
       width: 80%;
       max-width: 1000px;
@@ -28,9 +30,6 @@
     .left-panel, .right-panel {
       width: 45%;
       padding: 20px;
-    }
-    .left-panel {
-      border-right: 1px solid #ccc;
     }
     h1 {
       text-align: center;
@@ -90,46 +89,57 @@
       opacity: 0;
       transition: opacity 0.5s ease-in-out;
     }
+    .main-content {
+      display: flex;
+      justify-content: space-between;
+      padding: 20px;
+    }
+    .logout-btn {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      padding: 10px 15px;
+      background-color: #45a049;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      z-index: 100;
+    }
+    .logout-btn:hover {
+      background-color: #358c37;
+    }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <!-- Left Panel: Product Adding Form -->
-    <div class="left-panel">
-      <h1>Inventory System</h1>
-      <input type="text" id="productName" placeholder="Enter product name">
-      <input type="number" id="productQuantity" placeholder="Enter quantity">
-      <input type="number" id="productPrice" placeholder="Enter price per unit">
-      <button onclick="addProduct()">Add Product</button>
-      <div id="notification"></div>
-    </div>
+    <div class="main-content">
+      <!-- Left Panel: Product Adding Form -->
+      <div class="left-panel">
+        <h1>Inventory System</h1>
+        <input type="text" id="productName" placeholder="Enter product name">
+        <input type="number" id="productQuantity" placeholder="Enter quantity">
+        <input type="number" id="productPrice" placeholder="Enter price per unit (₱)">
+        <button onclick="addProduct()">Add Product</button>
+      </div>
 
-    <!-- Right Panel: Inventory List -->
-    <div class="right-panel">
-      <h3>Inventory:</h3>
-      <div class="product-list" id="productList">
-        <!-- Product list will appear here -->
+      <!-- Right Panel: Inventory List -->
+      <div class="right-panel">
+        <h3>Inventory:</h3>
+        <div class="product-list" id="productList">
+          <!-- Product list will appear here -->
+        </div>
       </div>
     </div>
   </div>
 
+  <!-- Logout Button -->
+  <button class="logout-btn" onclick="logout()">Logout</button>
+
   <script>
     // Load the inventory from localStorage
     let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
-
-    // Function to display a notification message
-    function showNotification(message, type = 'success') {
-      const notification = document.getElementById('notification');
-      notification.textContent = message;
-      notification.style.color = type === 'success' ? 'green' : 'red';
-      notification.style.opacity = '1';
-
-      // Fade out after 2 seconds
-      setTimeout(() => {
-        notification.style.opacity = '0';
-      }, 2000);
-    }
 
     // Function to add a product
     function addProduct() {
@@ -139,23 +149,20 @@
 
       // Validate input
       if (!productName || isNaN(productQuantity) || productQuantity <= 0 || isNaN(productPrice) || productPrice <= 0) {
-        showNotification("Please enter valid product details.", "error");
+        alert("Please enter valid product name, quantity, and price.");
         return;
       }
 
-      // Check if the product already exists in the inventory
-      const existingProduct = inventory.find(product => product.name.toLowerCase() === productName.toLowerCase());
-
+      // Check if product already exists
+      const existingProduct = inventory.find(product => product.name === productName);
       if (existingProduct) {
-        // Update the quantity of the existing product
         existingProduct.quantity += productQuantity;
-        existingProduct.price = productPrice; // Optional: update price
-        showNotification(`Updated ${productName} quantity to ${existingProduct.quantity}.`);
+        existingProduct.price = productPrice; // Update price if needed
+        alert(`${productName} updated successfully!`);
       } else {
-        // Add new product to inventory
         const product = { name: productName, quantity: productQuantity, price: productPrice };
         inventory.push(product);
-        showNotification(`Added ${productName} to inventory.`);
+        alert(`${productName} added successfully!`);
       }
 
       // Save the inventory to localStorage
@@ -170,49 +177,16 @@
       displayInventory();
     }
 
-    // Function to remove a quantity of a product from the inventory
-    function removeQuantity(index) {
-      const removeAmount = parseInt(document.getElementById(`quantityInput${index}`).value);
-      const product = inventory[index];
-
-      // Validate input
-      if (isNaN(removeAmount) || removeAmount <= 0) {
-        showNotification("Please enter a valid quantity to remove.", "error");
-        return;
-      }
-
-      if (removeAmount > product.quantity) {
-        showNotification("You cannot remove more than the available quantity.", "error");
-        return;
-      }
-
-      // Update the quantity of the product or remove it completely if quantity is zero
-      if (removeAmount === product.quantity) {
-        inventory.splice(index, 1); // Remove the product completely if quantity becomes 0
-        showNotification(`Removed all of ${product.name} from inventory.`);
-      } else {
-        product.quantity -= removeAmount; // Decrease the quantity by the specified amount
-        showNotification(`Removed ${removeAmount} from ${product.name}. Remaining: ${product.quantity}.`);
-      }
-
-      // Save the updated inventory to localStorage
-      localStorage.setItem('inventory', JSON.stringify(inventory));
-
-      // Update product list
-      displayInventory();
-    }
-
     // Function to display the inventory
     function displayInventory() {
       const productList = document.getElementById('productList');
       productList.innerHTML = '';
 
-      // Loop through the inventory and create list items
       inventory.forEach((product, index) => {
         const productItem = document.createElement('div');
         productItem.classList.add('product-item');
         productItem.innerHTML = `
-          <span>${product.name} (Quantity: ${product.quantity}, Price: $${product.price.toFixed(2)})</span>
+          <span>${product.name} (Quantity: ${product.quantity}, Price: ₱${product.price.toFixed(2)})</span>
           <div>
             <input type="number" id="quantityInput${index}" class="quantity-input" placeholder="Quantity to remove">
             <button class="remove-btn" onclick="removeQuantity(${index})">Remove</button>
@@ -222,7 +196,34 @@
       });
     }
 
-    // Initialize the display on page load
+    // Function to remove quantity from inventory
+    function removeQuantity(index) {
+      const removeAmount = parseInt(document.getElementById(`quantityInput${index}`).value);
+      const product = inventory[index];
+
+      if (isNaN(removeAmount) || removeAmount <= 0 || removeAmount > product.quantity) {
+        alert("Invalid quantity to remove.");
+        return;
+      }
+
+      product.quantity -= removeAmount;
+
+      if (product.quantity === 0) {
+        inventory.splice(index, 1); // Remove the product completely
+      }
+
+      localStorage.setItem('inventory', JSON.stringify(inventory));
+      alert("Product quantity updated successfully!");
+      displayInventory();
+    }
+
+    // Function to logout
+    function logout() {
+      alert("You have been logged out.");
+      window.location.href = "index.html";
+    }
+
+    // Initialize the inventory list on page load
     displayInventory();
   </script>
 
