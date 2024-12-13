@@ -1,19 +1,230 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PERSONAL INFO</title>
-    <link rel="stylesheet" href="style1.css">
-      <button><a href="index.html">Back To Login</a></button>
-
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Inventory System</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      height: 100vh;
+      background-color: #f4f4f4;
+      background-image: url(https://wallpapers.com/images/featured/acoustic-guitar-background-81wwq1khlwvotnx4.jpg);
+    }
+    .container {
+      display: flex;
+      justify-content: space-between;
+      width: 80%;
+      max-width: 1000px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .left-panel, .right-panel {
+      width: 45%;
+      padding: 20px;
+    }
+    .left-panel {
+      border-right: 1px solid #ccc;
+    }
+    h1 {
+      text-align: center;
+    }
+    input[type="text"], input[type="number"] {
+      padding: 8px;
+      margin-bottom: 10px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #c79c30;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .product-list {
+      margin-top: 20px;
+    }
+    .product-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px;
+      margin: 5px 0;
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 3px;
+    }
+    .remove-btn {
+      background-color: #c79c30;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 3px;
+      padding: 5px 10px;
+    }
+    .remove-btn:hover {
+      background-color: #c79c30;
+    }
+    .quantity-input {
+      width: 60px;
+      padding: 5px;
+      margin-left: 10px;
+    }
+    #notification {
+      text-align: center;
+      margin-top: 10px;
+      color: green;
+      font-weight: bold;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="box">
-            <button><a href="index2.html"><img src="file:///C:/Users/Acer/Pictures/n.jpg" alt="" class="box-img"></a></button>
-            <h1>Elijah S. Gracio</h1>
-        </div>    
+
+  <div class="container">
+    <!-- Left Panel: Product Adding Form -->
+    <div class="left-panel">
+      <h1>Inventory System</h1>
+      <input type="text" id="productName" placeholder="Enter product name">
+      <input type="number" id="productQuantity" placeholder="Enter quantity">
+      <input type="number" id="productPrice" placeholder="Enter price per unit">
+      <button onclick="addProduct()">Add Product</button>
+      <div id="notification"></div>
+    </div>
+
+    <!-- Right Panel: Inventory List -->
+    <div class="right-panel">
+      <h3>Inventory:</h3>
+      <div class="product-list" id="productList">
+        <!-- Product list will appear here -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Load the inventory from localStorage
+    let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
+
+    // Function to display a notification message
+    function showNotification(message, type = 'success') {
+      const notification = document.getElementById('notification');
+      notification.textContent = message;
+      notification.style.color = type === 'success' ? 'green' : 'red';
+      notification.style.opacity = '1';
+
+      // Fade out after 2 seconds
+      setTimeout(() => {
+        notification.style.opacity = '0';
+      }, 2000);
+    }
+
+    // Function to add a product
+    function addProduct() {
+      const productName = document.getElementById('productName').value.trim();
+      const productQuantity = parseInt(document.getElementById('productQuantity').value);
+      const productPrice = parseFloat(document.getElementById('productPrice').value);
+
+      // Validate input
+      if (!productName || isNaN(productQuantity) || productQuantity <= 0 || isNaN(productPrice) || productPrice <= 0) {
+        showNotification("Please enter valid product details.", "error");
+        return;
+      }
+
+      // Check if the product already exists in the inventory
+      const existingProduct = inventory.find(product => product.name.toLowerCase() === productName.toLowerCase());
+
+      if (existingProduct) {
+        // Update the quantity of the existing product
+        existingProduct.quantity += productQuantity;
+        existingProduct.price = productPrice; // Optional: update price
+        showNotification(`Updated ${productName} quantity to ${existingProduct.quantity}.`);
+      } else {
+        // Add new product to inventory
+        const product = { name: productName, quantity: productQuantity, price: productPrice };
+        inventory.push(product);
+        showNotification(`Added ${productName} to inventory.`);
+      }
+
+      // Save the inventory to localStorage
+      localStorage.setItem('inventory', JSON.stringify(inventory));
+
+      // Clear the input fields
+      document.getElementById('productName').value = '';
+      document.getElementById('productQuantity').value = '';
+      document.getElementById('productPrice').value = '';
+
+      // Update product list
+      displayInventory();
+    }
+
+    // Function to remove a quantity of a product from the inventory
+    function removeQuantity(index) {
+      const removeAmount = parseInt(document.getElementById(`quantityInput${index}`).value);
+      const product = inventory[index];
+
+      // Validate input
+      if (isNaN(removeAmount) || removeAmount <= 0) {
+        showNotification("Please enter a valid quantity to remove.", "error");
+        return;
+      }
+
+      if (removeAmount > product.quantity) {
+        showNotification("You cannot remove more than the available quantity.", "error");
+        return;
+      }
+
+      // Update the quantity of the product or remove it completely if quantity is zero
+      if (removeAmount === product.quantity) {
+        inventory.splice(index, 1); // Remove the product completely if quantity becomes 0
+        showNotification(`Removed all of ${product.name} from inventory.`);
+      } else {
+        product.quantity -= removeAmount; // Decrease the quantity by the specified amount
+        showNotification(`Removed ${removeAmount} from ${product.name}. Remaining: ${product.quantity}.`);
+      }
+
+      // Save the updated inventory to localStorage
+      localStorage.setItem('inventory', JSON.stringify(inventory));
+
+      // Update product list
+      displayInventory();
+    }
+
+    // Function to display the inventory
+    function displayInventory() {
+      const productList = document.getElementById('productList');
+      productList.innerHTML = '';
+
+      // Loop through the inventory and create list items
+      inventory.forEach((product, index) => {
+        const productItem = document.createElement('div');
+        productItem.classList.add('product-item');
+        productItem.innerHTML = `
+          <span>${product.name} (Quantity: ${product.quantity}, Price: $${product.price.toFixed(2)})</span>
+          <div>
+            <input type="number" id="quantityInput${index}" class="quantity-input" placeholder="Quantity to remove">
+            <button class="remove-btn" onclick="removeQuantity(${index})">Remove</button>
+          </div>
+        `;
+        productList.appendChild(productItem);
+      });
+    }
+
+    // Initialize the display on page load
+    displayInventory();
+  </script>
+
 </body>
 </html>
