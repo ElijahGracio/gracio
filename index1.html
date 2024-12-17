@@ -153,6 +153,13 @@
         return;
       }
 
+      // Ask for confirmation before proceeding
+      const confirmation = confirm(`Is this information correct?\n\nProduct Name: ${productName}\nQuantity: ${productQuantity}\nPrice: ₱${productPrice.toFixed(2)}`);
+      if (!confirmation) {
+        alert("Product addition cancelled.");
+        return;
+      }
+
       // Check if product already exists
       const existingProduct = inventory.find(product => product.name === productName);
       if (existingProduct) {
