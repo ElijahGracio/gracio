@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Elijah Gracio</title>
+  <title>Inventory System</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -14,41 +14,38 @@
       align-items: flex-start;
       height: 100vh;
       background-color: #f4f4f4;
-      background-image: url(https://wallpapers.com/images/featured/acoustic-guitar-background-81wwq1khlwvotnx4.jpg);
+      background-image: url('https://wallpapers.com/images/featured/acoustic-guitar-background-81wwq1khlwvotnx4.jpg');
+      background-size: cover;
       position: relative;
     }
     .container {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
       width: 80%;
       max-width: 1000px;
       background-color: white;
       border-radius: 8px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-    .left-panel, .right-panel {
-      width: 45%;
       padding: 20px;
     }
     h1 {
       text-align: center;
+      margin-bottom: 20px;
     }
     input[type="text"], input[type="number"] {
       padding: 8px;
       margin-bottom: 10px;
-      width: 100%;
+      width: calc(33% - 10px);
+      margin-right: 10px;
       box-sizing: border-box;
     }
     button {
-      width: 100%;
       padding: 10px;
       background-color: #c79c30;
       color: white;
       border: none;
       cursor: pointer;
       border-radius: 5px;
-      margin-top: 10px;
     }
     button:hover {
       background-color: #45a049;
@@ -56,55 +53,41 @@
     .product-list {
       margin-top: 20px;
     }
-    .product-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 8px;
-      margin: 5px 0;
-      background-color: #f9f9f9;
-      border: 1px solid #ddd;
-      border-radius: 3px;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: #fff;
     }
-    .remove-btn {
-      background-color: #c79c30;
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border: 1px solid #ddd;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+    .action-btn {
+      margin-right: 5px;
+      padding: 5px 10px;
+      background-color: #007bff;
       color: white;
       border: none;
+      border-radius: 4px;
       cursor: pointer;
-      border-radius: 3px;
-      padding: 5px 10px;
     }
-    .remove-btn:hover {
-      background-color: #c79c30;
-    }
-    .quantity-input {
-      width: 60px;
-      padding: 5px;
-      margin-left: 10px;
-    }
-    #notification {
-      text-align: center;
-      margin-top: 10px;
-      color: green;
-      font-weight: bold;
-      opacity: 0;
-      transition: opacity 0.5s ease-in-out;
-    }
-    .main-content {
-      display: flex;
-      justify-content: space-between;
-      padding: 20px;
+    .action-btn:hover {
+      background-color: #0056b3;
     }
     .logout-btn {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      padding: 10px 15px;
+      margin-top: 20px;
+      padding: 10px;
       background-color: #45a049;
       color: white;
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      z-index: 100;
+      align-self: flex-start;
     }
     .logout-btn:hover {
       background-color: #358c37;
@@ -112,98 +95,106 @@
   </style>
 </head>
 <body>
-
   <div class="container">
-    <div class="main-content">
-      <!-- Left Panel: Product Adding Form -->
-      <div class="left-panel">
-        <h1>Inventory System</h1>
-        <input type="text" id="productName" placeholder="Enter product name">
-        <input type="number" id="productQuantity" placeholder="Enter quantity">
-        <input type="number" id="productPrice" placeholder="Enter price per unit (₱)">
-        <button onclick="addProduct()">Add Product</button>
-      </div>
-
-      <!-- Right Panel: Inventory List -->
-      <div class="right-panel">
-        <h3>Inventory:</h3>
-        <div class="product-list" id="productList">
-          <!-- Product list will appear here -->
-        </div>
-      </div>
+    <h1>Inventory System</h1>
+    <div>
+      <input type="text" id="productName" placeholder="Enter product name">
+      <input type="number" id="productQuantity" placeholder="Enter quantity">
+      <input type="number" id="productPrice" placeholder="Enter price per unit (₱)">
+      <button onclick="addProduct()">Add Product</button>
     </div>
+    <h3>Inventory:</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Product Name</th>
+          <th>Quantity</th>
+          <th>Price (₱)</th>
+          <th>Date Updated</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="inventoryTableBody">
+        <!-- Inventory items will appear here -->
+      </tbody>
+    </table>
+    <button class="logout-btn" onclick="logout()">Logout</button>
   </div>
 
-  <!-- Logout Button -->
-  <button class="logout-btn" onclick="logout()">Logout</button>
-
   <script>
-    // Load the inventory from localStorage
     let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
 
-    // Function to add a product
     function addProduct() {
       const productName = document.getElementById('productName').value.trim();
       const productQuantity = parseInt(document.getElementById('productQuantity').value);
       const productPrice = parseFloat(document.getElementById('productPrice').value);
 
-      // Validate input
-      if (!productName || isNaN(productQuantity) || productQuantity <= 0 || isNaN(productPrice) || productPrice <= 0) {
+      if (!productName || isNaN(productQuantity) || productQuantity < 0 || isNaN(productPrice) || productPrice <= 0) {
         alert("Please enter valid product name, quantity, and price.");
         return;
       }
 
-      // Ask for confirmation before proceeding
       const confirmation = confirm(`Is this information correct?\n\nProduct Name: ${productName}\nQuantity: ${productQuantity}\nPrice: ₱${productPrice.toFixed(2)}`);
-      if (!confirmation) {
-        alert("Product addition cancelled.");
-        return;
-      }
+      if (!confirmation) return;
 
-      // Check if product already exists
-      const existingProduct = inventory.find(product => product.name === productName);
+      const dateUpdated = new Date().toLocaleString();
+      const existingProduct = inventory.find(product => product.name.toLowerCase() === productName.toLowerCase());
+
       if (existingProduct) {
         existingProduct.quantity += productQuantity;
-        existingProduct.price = productPrice; // Update price if needed
-        alert(`${productName} updated successfully!`);
+        existingProduct.price = productPrice;
+        existingProduct.dateUpdated = dateUpdated;
+        alert(`${productName} stock updated successfully!`);
       } else {
-        const product = { name: productName, quantity: productQuantity, price: productPrice };
+        const product = { name: productName, quantity: productQuantity, price: productPrice, dateUpdated };
         inventory.push(product);
         alert(`${productName} added successfully!`);
       }
 
-      // Save the inventory to localStorage
       localStorage.setItem('inventory', JSON.stringify(inventory));
-
-      // Clear the input fields
       document.getElementById('productName').value = '';
       document.getElementById('productQuantity').value = '';
       document.getElementById('productPrice').value = '';
-
-      // Update product list
       displayInventory();
     }
 
-    // Function to display the inventory
     function displayInventory() {
-      const productList = document.getElementById('productList');
-      productList.innerHTML = '';
+      const inventoryTableBody = document.getElementById('inventoryTableBody');
+      inventoryTableBody.innerHTML = '';
 
       inventory.forEach((product, index) => {
-        const productItem = document.createElement('div');
-        productItem.classList.add('product-item');
-        productItem.innerHTML = `
-          <span>${product.name} (Quantity: ${product.quantity}, Price: ₱${product.price.toFixed(2)})</span>
-          <div>
-            <input type="number" id="quantityInput${index}" class="quantity-input" placeholder="Quantity to remove">
-            <button class="remove-btn" onclick="removeQuantity(${index})">Remove</button>
-          </div>
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${product.name}</td>
+          <td>${product.quantity}</td>
+          <td>₱${product.price.toFixed(2)}</td>
+          <td>${product.dateUpdated}</td>
+          <td>
+            <input type="number" id="quantityInput${index}" placeholder="Qty" style="width: 60px;">
+            <button class="action-btn" onclick="addStock(${index})">Add Stock</button>
+            <button class="action-btn" onclick="removeQuantity(${index})">Remove Quantity</button>
+            <button class="action-btn" onclick="deleteProduct(${index})">Delete</button>
+          </td>
         `;
-        productList.appendChild(productItem);
+        inventoryTableBody.appendChild(row);
       });
     }
 
-    // Function to remove quantity from inventory
+    function addStock(index) {
+      const addAmount = parseInt(document.getElementById(`quantityInput${index}`).value);
+      if (isNaN(addAmount) || addAmount <= 0) {
+        alert("Invalid quantity to add.");
+        return;
+      }
+
+      inventory[index].quantity += addAmount;
+      inventory[index].dateUpdated = new Date().toLocaleString();
+
+      localStorage.setItem('inventory', JSON.stringify(inventory));
+      alert("Stock added successfully!");
+      displayInventory();
+    }
+
     function removeQuantity(index) {
       const removeAmount = parseInt(document.getElementById(`quantityInput${index}`).value);
       const product = inventory[index];
@@ -214,25 +205,33 @@
       }
 
       product.quantity -= removeAmount;
+      product.dateUpdated = new Date().toLocaleString();
 
       if (product.quantity === 0) {
-        inventory.splice(index, 1); // Remove the product completely
+        alert(`${product.name} is out of stock.`);
+      } else {
+        alert(`${removeAmount} units removed from ${product.name}.`);
       }
 
       localStorage.setItem('inventory', JSON.stringify(inventory));
-      alert("Product quantity updated successfully!");
       displayInventory();
     }
 
-    // Function to logout
+    function deleteProduct(index) {
+      if (confirm(`Are you sure you want to delete ${inventory[index].name}?`)) {
+        inventory.splice(index, 1);
+        localStorage.setItem('inventory', JSON.stringify(inventory));
+        alert("Product deleted successfully!");
+        displayInventory();
+      }
+    }
+
     function logout() {
       alert("You have been logged out.");
       window.location.href = "index.html";
     }
 
-    // Initialize the inventory list on page load
     displayInventory();
   </script>
-
 </body>
 </html>
